@@ -1,6 +1,6 @@
-module Main (main) where
+-- Main.hs
 
-import Lib
+import Html
 
 main :: IO ()
 main = putStrLn $ render myHtml

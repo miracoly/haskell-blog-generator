@@ -1,17 +1,28 @@
-module Lib
-  ( module Lib,
+-- Html.hs
+
+module Html
+  ( Html,
+    Structure,
+    html_,
+    p_,
+    h1_,
+    append_,
+    render,
   )
 where
-  
+
 newtype Html = Html String
+
 newtype Structure = Structure String
 
-html_ :: String -> Structure -> Html
+type Title = String
+
+html_ :: Title -> Structure -> Html
 html_ title content =
   Html $
     el "html" $
-      el "head" (el "title" title) <>
-      el "body" (getString content)
+      el "head" (el "title" title)
+        <> el "body" (getString content)
 
 p_ :: String -> Structure
 p_ = Structure . el "p"
