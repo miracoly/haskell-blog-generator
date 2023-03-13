@@ -22,8 +22,23 @@ html_ title content =
 p_ :: String -> Structure
 p_ = Structure . el "p" . escape
 
+code_ :: String -> Structure
+code_ = Structure . el "pre" . escape
+
 h1_ :: String -> Structure
 h1_ = Structure . el "h1" . escape
+
+ul_ :: [Structure] -> Structure
+ul_ = htmlList_ "ul"
+
+ol_ :: [Structure] -> Structure
+ol_ = htmlList_ "ol"
+
+htmlList_ :: String -> [Structure] -> Structure
+htmlList_ tag = Structure . el tag . concatMap (getString . li_)
+
+li_ :: Structure -> Structure
+li_ = Structure . el "li" . getString
 
 append_ :: Structure -> Structure -> Structure
 append_ (Structure str1) (Structure str2) = Structure (str1 <> str2)
