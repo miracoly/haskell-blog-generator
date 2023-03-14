@@ -27,6 +27,8 @@ library
   exposed-modules:
       Html
       Html.Internal
+      Markup
+      Markup.Internal
   other-modules:
       Paths_haskell_blog_generator
   hs-source-dirs:
