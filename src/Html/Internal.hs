@@ -1,12 +1,15 @@
 -- Html/Internal.hs
 
 module Html.Internal (module Html.Internal) where
-  
+
 -- * Types
 
 newtype Html = Html String
 
 newtype Structure = Structure String
+
+instance Semigroup Structure where
+  (<>) struc1 struc2 = Structure (getString struc1 <> getString struc2)
 
 type Title = String
 
@@ -40,16 +43,13 @@ htmlList_ tag = Structure . el tag . concatMap (getString . li_)
 li_ :: Structure -> Structure
 li_ = Structure . el "li" . getString
 
-append_ :: Structure -> Structure -> Structure
-append_ (Structure str1) (Structure str2) = Structure (str1 <> str2)
-
 -- * Render
 
 render :: Html -> String
 render html =
   case html of
     Html str -> str
-    
+
 -- * Utilities
 
 el :: String -> String -> String
