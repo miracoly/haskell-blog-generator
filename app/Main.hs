@@ -6,9 +6,9 @@ import Html
 import Markup
 
 main :: IO ()
-main = do
-  txt <- readFile "resources/sample.txt"
-  putStrLn $ if parse txt == example4 then "CORRECT" else "FALSE"
+main = putStr $ render myHtml
+--  txt <- readFile "resources/sample.txt"
+--  putStrLn $ if parse txt == example4 then "CORRECT" else "FALSE"
 
 example4 :: [Markup.Structure]
 example4 =
@@ -43,7 +43,7 @@ myHtml =
   html_
     "My title"
     $ (<>)
-      (h1_ "My headline")
+      (h_ 1 "My headline")
       $ (<>)
         (p_ "Let's learn about haskell")
         $ (<>)

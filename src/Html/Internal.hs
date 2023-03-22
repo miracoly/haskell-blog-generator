@@ -2,6 +2,8 @@
 
 module Html.Internal (module Html.Internal) where
 
+import Numeric.Natural (Natural)
+
 -- * Types
 
 newtype Html = Html String
@@ -10,6 +12,9 @@ newtype Structure = Structure String
 
 instance Semigroup Structure where
   (<>) struc1 struc2 = Structure (getString struc1 <> getString struc2)
+  
+instance Monoid Structure where
+  mempty = empty_
 
 type Title = String
 
@@ -28,8 +33,8 @@ p_ = Structure . el "p" . escape
 code_ :: String -> Structure
 code_ = Structure . el "pre" . escape
 
-h1_ :: String -> Structure
-h1_ = Structure . el "h1" . escape
+h_ :: Natural -> String -> Structure
+h_ n = Structure . el ("h" <> show n) . escape
 
 ul_ :: [Structure] -> Structure
 ul_ = htmlList_ "ul"
@@ -42,6 +47,9 @@ htmlList_ tag = Structure . el tag . concatMap (getString . li_)
 
 li_ :: Structure -> Structure
 li_ = Structure . el "li" . getString
+
+empty_ :: Structure
+empty_ = Structure ""
 
 -- * Render
 
