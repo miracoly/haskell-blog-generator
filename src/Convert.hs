@@ -1,3 +1,7 @@
-module Convert (convertStructure) where
+module Convert
+  ( process,
+    convertStructure,
+  )
+where
 
 import Convert.Internal

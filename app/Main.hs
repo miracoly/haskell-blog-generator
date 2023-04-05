@@ -4,11 +4,36 @@ import Data.Maybe (listToMaybe)
 import Data.Word (Word8)
 import Html
 import Markup
+import Convert
+import System.Directory (doesFileExist)
+import System.Environment (getArgs)
 
 main :: IO ()
-main = putStr $ render myHtml
---  txt <- readFile "resources/sample.txt"
---  putStrLn $ if parse txt == example4 then "CORRECT" else "FALSE"
+main = getArgs >>= dispatch
+  where
+    dispatch :: [String] -> IO ()
+    dispatch args =
+      case args of
+        [] -> getContents >>= putStrLn . process "Empty title"
+        [input, output] -> readWriteFile input output
+        _ -> putStrLn "Usage: runghc Main.hs [-- <input-file> <output-file>]"
+
+    readWriteFile :: String -> String -> IO ()
+    readWriteFile input output =
+      readFile input
+        >>= \content ->
+          doesFileExist output
+            >>= \doesExist ->
+              let writeResult = writeFile output (process "Empty title" content)
+               in if doesExist then askForConfirmation writeResult else writeResult
+
+askForConfirmation :: IO () -> IO ()
+askForConfirmation io =
+  putStrLn "Output file already exists. Do you want to overwrite? y/n"
+    *> readLn >>= \answer -> if answer == "y" then io else pure ()
+    
+    
+-- Playground
 
 example4 :: [Markup.Structure]
 example4 =

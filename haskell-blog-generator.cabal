@@ -38,6 +38,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , directory >=1.3.6 && <1.4
   default-language: Haskell2010
 
 executable haskell-blog-generator-exe
@@ -49,6 +50,7 @@ executable haskell-blog-generator-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , directory >=1.3.6 && <1.4
     , haskell-blog-generator
   default-language: Haskell2010
 
@@ -62,5 +64,6 @@ test-suite haskell-blog-generator-test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , directory >=1.3.6 && <1.4
     , haskell-blog-generator
   default-language: Haskell2010

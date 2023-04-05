@@ -5,6 +5,9 @@ module Convert.Internal (module Convert.Internal) where
 import qualified Html.Internal as Html
 import qualified Markup.Internal as Markup
 
+process :: Html.Title -> String -> String
+process title = Html.render . convert title . Markup.parse
+
 convert :: Html.Title -> Markup.Document -> Html.Html
 convert title = Html.html_ title . foldMap convertStructure
 
