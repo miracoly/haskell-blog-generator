@@ -36,23 +36,29 @@ library
       Paths_haskell_blog_generator
   hs-source-dirs:
       src
+  default-extensions:
+      LambdaCase
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
     , directory >=1.3.6 && <1.4
   default-language: Haskell2010
 
-executable haskell-blog-generator-exe
+executable hs-blog
   main-is: Main.hs
   other-modules:
-      Paths_haskell_blog_generator
+      OptParse
+      OptParse.Internal
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  default-extensions:
+      LambdaCase
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -O
   build-depends:
       base >=4.7 && <5
     , directory >=1.3.6 && <1.4
     , haskell-blog-generator
+    , optparse-applicative >=0.17 && <1.0
   default-language: Haskell2010
 
 test-suite haskell-blog-generator-test
@@ -62,6 +68,8 @@ test-suite haskell-blog-generator-test
       Paths_haskell_blog_generator
   hs-source-dirs:
       test
+  default-extensions:
+      LambdaCase
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
