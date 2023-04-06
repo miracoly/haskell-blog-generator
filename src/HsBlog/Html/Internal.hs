@@ -1,6 +1,6 @@
--- Html/Internal.hs
+-- HsBlog/Html/Internal.hs
 
-module Html.Internal (module Html.Internal) where
+module HsBlog.Html.Internal (module HsBlog.Html.Internal) where
 
 import Numeric.Natural (Natural)
 

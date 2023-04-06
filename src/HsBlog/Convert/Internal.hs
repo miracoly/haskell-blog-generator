@@ -1,12 +1,9 @@
--- Convert/Internal.hs
+-- HsBlog/Convert/Internal.hs
 
-module Convert.Internal (module Convert.Internal) where
+module HsBlog.Convert.Internal (module HsBlog.Convert.Internal) where
 
-import qualified Html.Internal as Html
-import qualified Markup.Internal as Markup
-
-process :: Html.Title -> String -> String
-process title = Html.render . convert title . Markup.parse
+import qualified HsBlog.Html.Internal as Html
+import qualified HsBlog.Markup.Internal as Markup
 
 convert :: Html.Title -> Markup.Document -> Html.Html
 convert title = Html.html_ title . foldMap convertStructure

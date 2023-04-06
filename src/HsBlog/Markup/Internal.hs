@@ -1,4 +1,6 @@
-module Markup.Internal (module Markup.Internal) where
+-- HsBlog/Markup/Internal.hs
+
+module HsBlog.Markup.Internal (module HsBlog.Markup.Internal) where
 
 import Data.Maybe (maybeToList)
 import Numeric.Natural (Natural)

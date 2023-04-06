@@ -25,12 +25,13 @@ source-repository head
 
 library
   exposed-modules:
-      Convert
-      Convert.Internal
-      Html
-      Html.Internal
-      Markup
-      Markup.Internal
+      HsBlog
+      HsBlog.Convert
+      HsBlog.Convert.Internal
+      HsBlog.Html
+      HsBlog.Html.Internal
+      HsBlog.Markup
+      HsBlog.Markup.Internal
   other-modules:
       Paths_haskell_blog_generator
   hs-source-dirs:
