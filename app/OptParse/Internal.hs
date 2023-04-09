@@ -1,11 +1,11 @@
 -- OptParse/Internal.hs
 module OptParse.Internal (module OptParse.Internal) where
 
-import Options.Applicative
 import Data.Maybe (fromMaybe)
+import Options.Applicative
 
 data Options
-  = ConvertSingle SingleInput SingleOutput
+  = ConvertSingle SingleInput SingleOutput AllowOverwrite
   | ConvertDir FilePath FilePath
   deriving (Show)
 
@@ -18,6 +18,8 @@ data SingleOutput
   = Stdout
   | OutputFile FilePath
   deriving (Show)
+
+type AllowOverwrite = Bool
 
 parse :: IO Options
 parse = execParser opts
@@ -58,7 +60,7 @@ pConvertDir :: Parser Options
 pConvertDir = ConvertDir <$> pInputDir <*> pOutputDir
 
 pConvertSingle :: Parser Options
-pConvertSingle = ConvertSingle <$> pSingleInput <*> pSingleOutput
+pConvertSingle = ConvertSingle <$> pSingleInput <*> pSingleOutput <*> pAllowOverwrite
 
 pSingleInput :: Parser SingleInput
 pSingleInput = fromMaybe Stdin <$> optional pInputFile
@@ -86,6 +88,18 @@ pOutputFile = fmap OutputFile parser
             <> short 'o'
             <> metavar "FILE"
             <> help "Output File"
+        )
+
+pAllowOverwrite :: Parser AllowOverwrite
+pAllowOverwrite = parser
+  where
+    parser =
+      flag
+        False
+        True
+        ( long "replace"
+            <> short 'r'
+            <> help "Allow overwrite if output file already exists"
         )
 
 pInputDir :: Parser FilePath

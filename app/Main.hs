@@ -10,7 +10,7 @@ main = do
   options <- parse
   case options of
     ConvertDir input output -> HsBlog.convertDirectory input output
-    ConvertSingle input output -> do
+    ConvertSingle input output allowOverwrite -> do
       (title, inputHandle) <-
         case input of
           Stdin -> pure ("", stdin)
@@ -21,7 +21,7 @@ main = do
           OutputFile file -> do
             exists <- doesFileExist file
             shouldOpenFile <-
-              if exists
+              if exists && not allowOverwrite
                 then HsBlog.confirm
                 else pure True
             if shouldOpenFile
