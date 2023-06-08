@@ -2,14 +2,20 @@
 
 module HsBlog.Html
   ( Html,
-    Structure,
     Title,
+    Structure,
+    Content,
     html_,
     p_,
-    code_,
     h_,
     ul_,
     ol_,
+    code_,
+    txt_,
+    link_,
+    img_,
+    b_,
+    i_,
     render,
   )
 where

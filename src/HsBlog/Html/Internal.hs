@@ -10,11 +10,7 @@ newtype Html = Html String
 
 newtype Structure = Structure String
 
-instance Semigroup Structure where
-  (<>) struc1 struc2 = Structure (getString struc1 <> getString struc2)
-  
-instance Monoid Structure where
-  mempty = empty_
+newtype Content = Content String
 
 type Title = String
 
@@ -25,16 +21,18 @@ html_ title content =
   Html $
     el "html" $
       el "head" (el "title" (escape title))
-        <> el "body" (getString content)
+        <> el "body" (getStructureString content)
 
-p_ :: String -> Structure
-p_ = Structure . el "p" . escape
+-- * Structure
+
+p_ :: Content -> Structure
+p_ = Structure . el "p" . getContentString
 
 code_ :: String -> Structure
 code_ = Structure . el "pre" . escape
 
-h_ :: Natural -> String -> Structure
-h_ n = Structure . el ("h" <> show n) . escape
+h_ :: Natural -> Content -> Structure
+h_ n = Structure . el ("h" <> show n) . getContentString
 
 ul_ :: [Structure] -> Structure
 ul_ = htmlList_ "ul"
@@ -43,13 +41,43 @@ ol_ :: [Structure] -> Structure
 ol_ = htmlList_ "ol"
 
 htmlList_ :: String -> [Structure] -> Structure
-htmlList_ tag = Structure . el tag . concatMap (getString . li_)
+htmlList_ tag = Structure . el tag . concatMap (getStructureString . li_)
 
 li_ :: Structure -> Structure
-li_ = Structure . el "li" . getString
+li_ = Structure . el "li" . getStructureString
 
-empty_ :: Structure
-empty_ = Structure ""
+instance Semigroup Structure where
+  (<>) s1 s2 = Structure (getStructureString s1 <> getStructureString s2)
+
+instance Monoid Structure where
+  mempty = Structure ""
+
+-- * Content
+
+txt_ :: String -> Content
+txt_ = Content . escape
+
+link_ :: FilePath -> Content -> Content
+link_ path content =
+  Content $
+    elAttr "a" ("href=\"" <> escape path <> "\"") (getContentString content)
+
+img_ :: FilePath -> Content
+img_ path =
+  Content $  "<img src=\"" <> escape path <> "\">"
+
+b_ :: Content -> Content
+b_ = Content . el "b" . getContentString
+
+i_ :: Content -> Content
+i_ = Content . el "i" . getContentString
+
+instance Semigroup Content where
+  (<>) c1 c2 =
+    Content (getContentString c1 <> getContentString c2)
+
+instance Monoid Content where
+  mempty = Content ""
 
 -- * Render
 
@@ -63,6 +91,20 @@ render html =
 el :: String -> String -> String
 el tag content = "<" <> tag <> ">" <> content <> "</" <> tag <> ">"
 
+elAttr :: String -> String -> String -> String
+elAttr tag attrs content =
+  "<" <> tag <> " " <> attrs <> ">" <> content <> "</" <> tag <> ">"
+
+getStructureString :: Structure -> String
+getStructureString struct =
+  case struct of
+    Structure str -> str
+
+getContentString :: Content -> String
+getContentString content =
+  case content of
+    Content str -> str
+
 escape :: String -> String
 escape =
   let escapeChar c =
@@ -74,8 +116,3 @@ escape =
           '\'' -> "&#39;"
           _ -> [c]
    in concatMap escapeChar
-
-getString :: Structure -> String
-getString struct =
-  case struct of
-    Structure str -> str
