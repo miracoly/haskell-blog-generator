@@ -9,7 +9,7 @@ Link to the tutorial: [Learn Haskell by building a blog generator](https://lhbg-
 - [x] 3 - [Building an HTML printer library](https://lhbg-book.link/03-html_printer.html)
 - [x] 4 - [Custom markup language](https://lhbg-book.link/04-markup.html)
 - [x] 5 - [Gluing things together](https://lhbg-book.link/05-glue.html)
-- [ ] 6 - [Handling errors and multiple files]()
+- [x] 6 - [Handling errors and multiple files]()
 - [ ] 7 - [Passing an environment]()
 - [ ] 8 - [Writing tests]()
 - [ ] 9 - [Generating documentation]()
