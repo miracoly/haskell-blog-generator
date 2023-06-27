@@ -1,4 +1,6 @@
 -- app/Main.hs
+module Main (module Main) where
+
 import qualified HsBlog
 import HsBlog.Directory
 import OptParse
