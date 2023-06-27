@@ -29,6 +29,7 @@ library
       HsBlog.Convert
       HsBlog.Convert.Internal
       HsBlog.Directory
+      HsBlog.Env
       HsBlog.Html
       HsBlog.Html.Internal
       HsBlog.Markup
@@ -44,6 +45,7 @@ library
       base >=4.7 && <5
     , directory >=1.3.6 && <1.4
     , filepath ==1.4.2.2
+    , mtl >=2.2.2 && <2.3
   default-language: Haskell2010
 
 executable hs-blog
@@ -61,6 +63,7 @@ executable hs-blog
     , directory >=1.3.6 && <1.4
     , filepath ==1.4.2.2
     , haskell-blog-generator
+    , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.17 && <1.0
   default-language: Haskell2010
 
@@ -79,4 +82,5 @@ test-suite haskell-blog-generator-test
     , directory >=1.3.6 && <1.4
     , filepath ==1.4.2.2
     , haskell-blog-generator
+    , mtl >=2.2.2 && <2.3
   default-language: Haskell2010

@@ -6,9 +6,11 @@ where
 
 import Control.Exception (SomeException (..), catch, displayException)
 import Control.Monad (void, when)
+import Control.Monad.Reader (Reader, ask, runReader)
 import Data.List (partition)
 import Data.Traversable (for)
 import HsBlog.Convert (convert, convertStructure)
+import HsBlog.Env
 import qualified HsBlog.Html as Html
 import qualified HsBlog.Markup as Markup
 import System.Directory
@@ -32,11 +34,11 @@ import System.IO (hPutStrLn, stderr)
 --   '.html' files in the process. Recording unsuccessful reads and writes to stderr.
 --
 -- May throw an exception on output directory creation.
-convertDirectory :: FilePath -> FilePath -> IO ()
-convertDirectory inputDir outputDir = do
+convertDirectory :: Env -> FilePath -> FilePath -> IO ()
+convertDirectory env inputDir outputDir = do
   DirContents filesToProcess filesToCopy <- getDirFilesAndContent inputDir
   createOutputDirectoryOrExit outputDir
-  let outputHtmls = txtsToRenderedHtml filesToProcess
+  let outputHtmls = runReader (txtsToRenderedHtml filesToProcess) env
   copyFiles outputDir filesToCopy
   writeFiles outputDir outputHtmls
   putStrLn "Done."
@@ -62,21 +64,30 @@ getDirFilesAndContent inputDir = do
         dcFilesToCopy = otherFiles
       }
 
-buildIndex :: [(FilePath, Markup.Document)] -> Html.Html
-buildIndex =
-  Html.html_ "Blog" . (<>) headline . mconcat . map singleIndex
-  where
-    headline :: Html.Structure
-    headline = Html.h_ 1 (Html.link_ "index.html" (Html.txt_ "Blog")) <> Html.h_ 2 (Html.txt_ "Posts")
-    singleIndex :: (FilePath, Markup.Document) -> Html.Structure
-    singleIndex (file, doc) =
-      case doc of
-        (Markup.Heading 1 heading) : article ->
-          Html.h_ 3 (Html.link_ file (Html.txt_ heading))
-            <> foldMap convertStructure (take 3 article)
-            <> Html.p_ (Html.link_ file (Html.txt_ "..."))
-        _ ->
-          Html.h_ 3 (Html.link_ file (Html.txt_ file))
+buildIndex :: [(FilePath, Markup.Document)] -> Reader Env Html.Html
+buildIndex files = do
+  env <- ask
+  let previews =
+        map
+          ( \(file, doc) ->
+              case doc of
+                Markup.Heading 1 heading : article ->
+                  Html.h_ 3 (Html.link_ file (Html.txt_ heading))
+                    <> foldMap convertStructure (take 3 article)
+                    <> Html.p_ (Html.link_ file (Html.txt_ "..."))
+                _ ->
+                  Html.h_ 3 (Html.link_ file (Html.txt_ file))
+          )
+          files
+  pure $
+    Html.html_
+      ( Html.title_ (eBlogName env)
+          <> Html.stylesheet_ (eStylesheetPath env)
+      )
+      ( Html.h_ 1 (Html.link_ "index.html" (Html.txt_ "Blog"))
+          <> Html.h_ 2 (Html.txt_ "Posts")
+          <> mconcat previews
+      )
 
 applyIoOnList :: (a -> IO b) -> [a] -> IO [(a, Either String b)]
 applyIoOnList action inputs = do
@@ -121,17 +132,22 @@ createOutputDirectory dir = do
   when create (createDirectory dir)
   pure create
 
-txtsToRenderedHtml :: [(FilePath, String)] -> [(FilePath, String)]
-txtsToRenderedHtml txtFiles =
+txtsToRenderedHtml :: [(FilePath, String)] -> Reader Env [(FilePath, String)]
+txtsToRenderedHtml txtFiles = do
   let txtOutputfiles = map toOutputMarkupFile txtFiles
-      index = ("index.html", buildIndex txtOutputfiles)
-   in map (fmap Html.render) (index : map convertFile txtOutputfiles)
+  index <- (,) "index.html" <$> buildIndex txtOutputfiles
+  htmlPages <- traverse convertFile txtOutputfiles
+  pure $ map (fmap Html.render) (index : htmlPages)
+
+--  map (fmap Html.render) (index : map convertFile txtOutputfiles)
 
 toOutputMarkupFile :: (FilePath, String) -> (FilePath, Markup.Document)
 toOutputMarkupFile (file, txt) = (takeBaseName file <.> ".html", Markup.parse txt)
 
-convertFile :: (FilePath, Markup.Document) -> (FilePath, Html.Html)
-convertFile (file, doc) = (file, convert file doc)
+convertFile :: (FilePath, Markup.Document) -> Reader Env (FilePath, Html.Html)
+convertFile (file, doc) = do
+  env <- ask
+  pure (file, convert env (takeBaseName file) doc)
 
 -- | Copy files to a directory, recording errors to stderr.
 copyFiles :: FilePath -> [FilePath] -> IO ()

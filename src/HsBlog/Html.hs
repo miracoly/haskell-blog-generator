@@ -17,6 +17,9 @@ module HsBlog.Html
     b_,
     i_,
     render,
+    title_,
+    stylesheet_,
+    meta_,
   )
 where
 

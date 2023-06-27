@@ -1,5 +1,6 @@
 -- app/Main.hs
 import qualified HsBlog
+import HsBlog.Directory
 import OptParse
 import System.Directory (doesFileExist)
 import System.Exit (exitFailure)
@@ -9,7 +10,7 @@ main :: IO ()
 main = do
   options <- parse
   case options of
-    ConvertDir input output -> HsBlog.convertDirectory input output
+    ConvertDir input output env -> convertDirectory env input output
     ConvertSingle input output allowOverwrite -> do
       (title, inputHandle) <-
         case input of

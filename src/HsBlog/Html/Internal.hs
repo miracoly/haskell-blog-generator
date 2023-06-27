@@ -8,6 +8,8 @@ import Numeric.Natural (Natural)
 
 newtype Html = Html String
 
+newtype Head = Head String
+
 newtype Structure = Structure String
 
 newtype Content = Content String
@@ -16,12 +18,30 @@ type Title = String
 
 -- * EDSL
 
-html_ :: Title -> Structure -> Html
-html_ title content =
+html_ :: Head -> Structure -> Html
+html_ (Head htmlHead) content =
   Html $
     el "html" $
-      el "head" (el "title" (escape title))
+      el "head" htmlHead
         <> el "body" (getStructureString content)
+
+-- * Headings
+
+title_ :: String -> Head
+title_ = Head . el "title" . escape
+
+stylesheet_ :: FilePath -> Head
+stylesheet_ file = Head $ elAttr "link" ("href=\"" <> escape file <> "\" rel=\"stylesheet\"") ""
+
+meta_ :: String -> String -> Head
+meta_ name content =
+  Head $ "<meta name=\"" <> escape name <> "\" content=\"" <> escape content <> "\">"
+
+instance Semigroup Head where
+  Head s1 <> Head s2 = Head $ s1 <> s2
+  
+instance Monoid Head where
+  mempty = Head ""
 
 -- * Structure
 
@@ -64,7 +84,7 @@ link_ path content =
 
 img_ :: FilePath -> Content
 img_ path =
-  Content $  "<img src=\"" <> escape path <> "\">"
+  Content $ "<img src=\"" <> escape path <> "\">"
 
 b_ :: Content -> Content
 b_ = Content . el "b" . getContentString
